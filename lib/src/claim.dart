@@ -2,7 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:fennec_jwt/src/claim_converter.dart';
-import 'package:fennec_jwt/src/splay.dart';
+import 'package:fennec_jwt/src/utils.dart';
 
 import '../fennec_jwt.dart';
 import 'jwt_date.dart';
@@ -248,7 +248,7 @@ class JwtClaim {
     _otherClaims.forEach((k, v) {
       assert(!body.containsKey(k));
       try {
-        body[k] = splay(v);
+        body[k] = Utils.splay(v);
       } on FormatException catch (e) {
         throw JsonUnsupportedObjectError('JWT claim: $k (${e.message})');
       }
