@@ -1,5 +1,5 @@
 name: fennec_jwt
-description: A simple command-line application.
+description: dart plugin for generate and validate jwt
 version: 0.0.1
 homepage: https://github.com/Fennec-Framework/fennec_jwt
 
