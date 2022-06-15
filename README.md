@@ -1,5 +1,5 @@
 
-**fennec_jwt** is dart plugin for generate and validate jwt. it belongs to fennec framework (link)[https://github.com/Fennec-Framework/fennec] but it can be used 
+**fennec_jwt** is dart plugin for generate and validate jwt. it belongs to fennec framework [pub.dev](https://pub.dev/packages/fennec) but it can be used 
 separately.
 
 # supported hashing algorithms:
@@ -14,7 +14,7 @@ separately.
 
 # installation:
 
-install the plugin from pub.dev
+install the plugin from [pub.dev](https://pub.dev/packages/fennec_jwt)
 
 
 # usage
