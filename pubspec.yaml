@@ -1,6 +1,6 @@
 name: fennec_jwt
 description: dart plugin for generate and validate jwt
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/Fennec-Framework/fennec_jwt
 
 environment:
