@@ -1,11 +1,8 @@
 import '../fennec_jwt.dart';
 
-/**
- * 
- */
 String claimConverter(JwtClaim claim) {
-  final buf = StringBuffer('{\n');
-  var hadPrev = false;
+  final StringBuffer buf = StringBuffer('{\n');
+  bool hadPrev = false;
   for (String claimName in claim.claimNames(includeRegisteredClaims: true)) {
     if (hadPrev) buf.write(',\n');
     buf.write(_toStringIndent);
@@ -22,12 +19,10 @@ String claimConverter(JwtClaim claim) {
 }
 
 const String _toStringIndent = '  ';
-
-void _toStringDump(dynamic? value, StringBuffer buf, [int indent = 0]) {
+void _toStringDump(dynamic value, StringBuffer buf, [int indent = 0]) {
   if (value is Iterable<dynamic>) {
-    // Dump an Iterable
     buf.write('[\n');
-    var hadPrev = false;
+    bool hadPrev = false;
     for (var v in value) {
       if (hadPrev) {
         buf.write(',\n');
@@ -63,17 +58,13 @@ void _toStringDump(dynamic? value, StringBuffer buf, [int indent = 0]) {
       ..write(_toStringIndent * (indent))
       ..write('}');
   } else if (value is String) {
-    // Dump a String value
     final escValue = value
       ..replaceAll('\\', '\\\\')
       ..replaceAll('"', '\\"');
     buf.write('"$escValue"');
   } else if (value is DateTime) {
-    // Dump a DateTime value
     buf.write('<$value>');
-    // buf.write('DateTime.parse("$value")');
   } else {
-    // Dump some other
     buf.write(value);
   }
 }

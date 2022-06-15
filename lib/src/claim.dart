@@ -50,7 +50,7 @@ class JwtClaim {
         if (v is String) {
           singleStringValue[claimName] = v;
         } else {
-          throw JwtException.invalidToken; // claim is not a StringOrURI
+          throw JwtException.invalidToken;
         }
       }
     }
@@ -59,22 +59,19 @@ class JwtClaim {
     if (data.containsKey('aud')) {
       audienceList = <String>[];
 
-      // The audience claim appears in the data
       final aud = data['aud'];
       if (aud is String) {
-        // Special case when the JWT has one audience
         audienceList.add(aud);
       } else if (aud is List) {
-        // General case
         for (var a in aud) {
           if (a is String) {
             audienceList.add(a);
           } else {
-            throw JwtException.invalidToken; // list contains a non-string value
+            throw JwtException.invalidToken;
           }
         }
       } else {
-        throw JwtException.invalidToken; // unexpected type for audience
+        throw JwtException.invalidToken;
       }
     }
 
@@ -82,7 +79,6 @@ class JwtClaim {
     final notBeforeOrNull = JwtDate.decode(data['nbf']);
     final issuedAtOrNull = JwtDate.decode(data['iat']);
 
-    // Extract all non-registered claims (including 'pld' if it is in the data)
     final others = <String, dynamic>{};
     data.forEach((k, v) {
       if (k is String) {
@@ -90,11 +86,10 @@ class JwtClaim {
           others[k] = v;
         }
       } else {
-        throw JwtException.invalidToken; // Map had non-String as a key
+        throw JwtException.invalidToken;
       }
     });
 
-    // Create a new JwtClaim and initialize with the registered claims
     return JwtClaim(
         issuer: singleStringValue['iss'],
         subject: singleStringValue['sub'],
@@ -117,10 +112,8 @@ class JwtClaim {
   final _otherClaims = <String, dynamic>{};
   bool containsKey(String claimName) {
     if (!registeredClaimNames.contains(claimName)) {
-      // Non-registered claim
       return _otherClaims.containsKey(claimName);
     } else {
-      // Registered claim
       switch (claimName) {
         case 'iss':
           return issuer != null;
@@ -137,7 +130,6 @@ class JwtClaim {
         case 'jti':
           return jwtId != null;
         default:
-          // coding error: all the registered claims should have been covered
           throw UnsupportedError('bad non-registered claim: $claimName');
       }
     }
@@ -145,10 +137,8 @@ class JwtClaim {
 
   dynamic operator [](String claimName) {
     if (!registeredClaimNames.contains(claimName)) {
-      // Non-registered claim
       return _otherClaims[claimName];
     } else {
-      // Registered claim
       switch (claimName) {
         case 'iss':
           return issuer;
@@ -165,7 +155,6 @@ class JwtClaim {
         case 'jti':
           return jwtId;
         default:
-          // coding error: all the registered claims should have been covered
           throw UnsupportedError('bad non-registered claim: $claimName');
       }
     }
@@ -177,11 +166,10 @@ class JwtClaim {
 
       for (var name in registeredClaimNames) {
         if (containsKey(name)) {
-          populatedClaims.add(name); // registered claim present, include name
+          populatedClaims.add(name);
         }
       }
 
-      // Include non-registered claims
       populatedClaims.addAll(_otherClaims.keys);
 
       return populatedClaims;
@@ -190,7 +178,6 @@ class JwtClaim {
     }
   }
 
-  /// The payload (pld) claim.
   Map<String, dynamic> get payload {
     final pld = _otherClaims['pld'];
 
@@ -206,10 +193,8 @@ class JwtClaim {
       String? audience,
       Duration? allowedClockSkew,
       DateTime? currentTime}) {
-    // Ensure clock skew has a value and is never negative
     final absClockSkew = allowedClockSkew?.abs() ?? const Duration();
 
-    // Check Issuer Claim
     if (issuer != null) {
       if (issuer != this.issuer) {
         throw JwtException.incorrectIssuer;
@@ -238,7 +223,6 @@ class JwtClaim {
   Map<String, dynamic> toJson() {
     final body = SplayTreeMap<String, dynamic>();
 
-    // Registered claims
     if (issuer != null) {
       body['iss'] = issuer!;
     }
@@ -261,7 +245,6 @@ class JwtClaim {
       body['jti'] = jwtId!;
     }
 
-    // Non-registered claims
     _otherClaims.forEach((k, v) {
       assert(!body.containsKey(k));
       try {
@@ -271,12 +254,9 @@ class JwtClaim {
       }
     });
 
-    // Return result (SplayTreeMap means JSON has the keys in sorted order)
-
     return body;
   }
 
-  /// Converts a JwtClaim into a multi-line String for display.
   @override
   String toString() => claimConverter(this);
   static const List<String> registeredClaimNames = [
